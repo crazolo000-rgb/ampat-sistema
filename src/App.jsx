@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import EscalaHoras from './components/EscalaHoras.jsx'
 import './App.css'
 import './index.css'
 import {
@@ -185,6 +186,9 @@ const CarnetSheet = ({ resident, config, monthsToPrint = [0,1,2,3,4,5,6,7,8,9,10
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [user, setUser] = useState(null)
+  // Verificação de admin: apenas emails específicos
+  const ADMINS = ['crazolo000@gmail.com', 'ampati2014@gmail.com'];
+  const isAdmin = user && user.email && ADMINS.includes(user.email);
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
@@ -204,6 +208,26 @@ export default function App() {
     dueDay: '10',
     year: new Date().getFullYear().toString()
   })
+
+  // Estados locais para o formulário de configuração
+  const [formAssocName, setFormAssocName] = useState(config.assocName)
+  const [formCnpj, setFormCnpj] = useState(config.cnpj)
+  const [formPixKey, setFormPixKey] = useState(config.pixKey)
+  const [formValue, setFormValue] = useState(config.value)
+  const [formDueDay, setFormDueDay] = useState(config.dueDay)
+  const [formYear, setFormYear] = useState(config.year)
+
+  // Sincroniza os campos do formulário apenas ao abrir a aba de configuração
+  useEffect(() => {
+    if (activeTab === 'config') {
+      setFormAssocName(config.assocName)
+      setFormCnpj(config.cnpj)
+      setFormPixKey(config.pixKey)
+      setFormValue(config.value)
+      setFormDueDay(config.dueDay)
+      setFormYear(config.year)
+    }
+  }, [activeTab, config])
 
   const [isEditing, setIsEditing] = useState(false)
   const [currentResident, setCurrentResident] = useState(null)
@@ -403,6 +427,18 @@ export default function App() {
     </div>
   )
 
+  const handleConfigSave = () => {
+    setConfig({
+      assocName: formAssocName,
+      cnpj: formCnpj,
+      pixKey: formPixKey,
+      value: formValue,
+      dueDay: formDueDay,
+      year: formYear
+    })
+    alert('Configurações Salvas!')
+  }
+
   const ConfigView = () => (
     <div className="max-w-2xl mx-auto">
       <Card className="p-6">
@@ -411,37 +447,37 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Nome da Associação</label>
-              <input value={config.assocName} onChange={(e) => setConfig({...config, assocName: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input value={formAssocName} onChange={(e) => setFormAssocName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">CNPJ (Opcional)</label>
-              <input value={config.cnpj} onChange={(e) => setConfig({...config, cnpj: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input value={formCnpj} onChange={(e) => setFormCnpj(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
           <div className="p-4 bg-blue-50 rounded border border-blue-200">
             <label className="block text-sm font-bold text-blue-800 mb-1">Chave PIX (Importante)</label>
             <p className="text-xs text-blue-700 mb-2">Essa chave aparecerá impressa em todos os carnês para facilitar o pagamento.</p>
-            <input value={config.pixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setConfig({...config, pixKey: e.target.value})} className="block w-full px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+            <input value={formPixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setFormPixKey(e.target.value)} className="block w-full px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Valor Mensal (R$)</label>
-              <input type="number" step="0.01" value={config.value} onChange={(e) => setConfig({...config, value: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" step="0.01" value={formValue} onChange={(e) => setFormValue(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Dia Vencimento</label>
-              <input type="number" min="1" max="31" value={config.dueDay} onChange={(e) => setConfig({...config, dueDay: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" min="1" max="31" value={formDueDay} onChange={(e) => setFormDueDay(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Ano de Ref.</label>
-              <input type="number" value={config.year} onChange={(e) => setConfig({...config, year: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" value={formYear} onChange={(e) => setFormYear(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
           <div className="pt-4 flex justify-end">
-            <Button variant="success" icon={CheckCircle} onClick={() => alert('Configurações Salvas!')}>Salvar Configurações</Button>
+            <Button variant="success" icon={CheckCircle} onClick={handleConfigSave}>Salvar Configurações</Button>
           </div>
         </div>
       </Card>
@@ -571,6 +607,9 @@ export default function App() {
           <button onClick={() => setActiveTab('residents')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'residents' || activeTab === 'residents_form' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Users className="mr-3" size={20} /> Moradores</button>
           <button onClick={() => setActiveTab('carnets')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'carnets' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><FileText className="mr-3" size={20} /> Gerar Carnês</button>
           <button onClick={() => setActiveTab('config')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'config' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Settings className="mr-3" size={20} /> Configurações</button>
+          {isAdmin && (
+            <button onClick={() => setActiveTab('escala')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'escala' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><FileText className="mr-3" size={20} /> Escala de Horas</button>
+          )}
         </nav>
 
         <div className="p-4 border-t border-blue-100 text-xs text-blue-400 text-center">Sistema de Gestão v1.0</div>
@@ -596,6 +635,7 @@ export default function App() {
                 {activeTab === 'residents_form' && (isEditing ? 'Editar Morador' : 'Adicionar Morador')}
                 {activeTab === 'carnets' && 'Central de Impressão'}
                 {activeTab === 'config' && 'Configurações do Sistema'}
+                {activeTab === 'escala' && 'Escala de Horas'}
               </h1>
               <button onClick={handleLogout} className="hidden md:flex items-center text-red-600 hover:text-red-700 font-medium gap-2">
                 <LogOut size={20} />
@@ -608,6 +648,14 @@ export default function App() {
             {activeTab === 'residents_form' && <ResidentFormView />}
             {activeTab === 'carnets' && <CarnetsView />}
             {activeTab === 'config' && <ConfigView />}
+            {activeTab === 'escala' && (
+              <EscalaHoras
+                funcionario={residents[0]?.name || 'Funcionário'}
+                mes={new Date().getMonth()}
+                ano={new Date().getFullYear()}
+                isAdmin={isAdmin}
+              />
+            )}
           </div>
         </main>
       </div>
