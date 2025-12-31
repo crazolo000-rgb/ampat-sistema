@@ -189,6 +189,26 @@ export default function App() {
   // Verificação de admin: apenas emails específicos
   const ADMINS = ['crazolo000@gmail.com', 'ampati2014@gmail.com'];
   const isAdmin = user && user.email && ADMINS.includes(user.email);
+
+  // Funcionários para escala de horas
+  const [funcionarios, setFuncionarios] = useState(() => {
+    const local = localStorage.getItem('ampat_funcionarios');
+    return local ? JSON.parse(local) : [];
+  });
+  const [novoFuncionario, setNovoFuncionario] = useState('');
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('ampat_funcionarios', JSON.stringify(funcionarios));
+  }, [funcionarios]);
+
+  function adicionarFuncionario(e) {
+    e.preventDefault();
+    if (novoFuncionario && !funcionarios.includes(novoFuncionario)) {
+      setFuncionarios([...funcionarios, novoFuncionario]);
+      setNovoFuncionario('');
+    }
+  }
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
@@ -649,12 +669,41 @@ export default function App() {
             {activeTab === 'carnets' && <CarnetsView />}
             {activeTab === 'config' && <ConfigView />}
             {activeTab === 'escala' && (
-              <EscalaHoras
-                funcionario={residents[0]?.name || 'Funcionário'}
-                mes={new Date().getMonth()}
-                ano={new Date().getFullYear()}
-                isAdmin={isAdmin}
-              />
+              <div>
+                <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
+                  <form onSubmit={adicionarFuncionario} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Novo funcionário"
+                      value={novoFuncionario}
+                      onChange={e => setNovoFuncionario(e.target.value)}
+                      className="border px-2 py-1 rounded"
+                      required
+                    />
+                    <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">Adicionar</button>
+                  </form>
+                  <select
+                    className="border px-2 py-1 rounded"
+                    value={funcionarioSelecionado}
+                    onChange={e => setFuncionarioSelecionado(e.target.value)}
+                  >
+                    <option value="">Selecione um funcionário</option>
+                    {funcionarios.map(f => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+                </div>
+                {funcionarioSelecionado ? (
+                  <EscalaHoras
+                    funcionario={funcionarioSelecionado}
+                    mes={new Date().getMonth()}
+                    ano={new Date().getFullYear()}
+                    isAdmin={isAdmin}
+                  />
+                ) : (
+                  <div className="text-gray-500">Selecione um funcionário para visualizar a escala.</div>
+                )}
+              </div>
             )}
           </div>
         </main>
