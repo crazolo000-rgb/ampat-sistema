@@ -82,18 +82,26 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
   }, [mes, ano]);
 
   useEffect(() => {
+    let ativo = true;
     async function fetchData() {
       setLoading(true);
-      const ref = doc(collection(db, 'escalas'), `${funcionario}_${mes+1}_${ano}`);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        setDias(snap.data().dias);
-      } else {
-        setDias(getDiasDoMes(mes, ano));
+      try {
+        const ref = doc(collection(db, 'escalas'), `${funcionario}_${mes+1}_${ano}`);
+        const snap = await getDoc(ref);
+        if (!ativo) return;
+        if (snap.exists()) {
+          setDias(snap.data().dias);
+        } else {
+          setDias(getDiasDoMes(mes, ano));
+        }
+      } catch (e) {
+        if (ativo) setDias(getDiasDoMes(mes, ano));
+      } finally {
+        if (ativo) setLoading(false);
       }
-      setLoading(false);
     }
     fetchData();
+    return () => { ativo = false; };
   }, [funcionario, mes, ano]);
 
   function handleChange(idx, campo, valor) {
