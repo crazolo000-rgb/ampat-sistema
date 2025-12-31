@@ -3,8 +3,10 @@ import './App.css'
 import './index.css'
 import {
   Users, Settings, FileText, Printer, Plus, Trash2,
-  Save, Home, Search, CheckCircle, Download
+  Save, Home, Search, CheckCircle, Download, LogOut
 } from 'lucide-react'
+import { auth } from './firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 const Card = ({ children, className = '' }) => (
   <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
@@ -127,6 +129,13 @@ const CarnetSheet = ({ resident, config, monthsToPrint = [0,1,2,3,4,5,6,7,8,9,10
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [user, setUser] = useState(null)
+  const [isLogin, setIsLogin] = useState(true)
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [loading, setLoading] = useState(false)
+
   const [residents, setResidents] = useState([
     { id: 1, name: 'João da Silva', address: 'Rua A, Lote 12', phone: '(11) 99999-9999' },
     { id: 2, name: 'Maria Oliveira', address: 'Rua B, Casa 05', phone: '(11) 98888-8888' },
@@ -148,11 +157,49 @@ export default function App() {
   const [printTarget, setPrintTarget] = useState(null)
 
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser)
+    })
+    return unsubscribe
+  }, [])
+
+  useEffect(() => {
     const savedResidents = localStorage.getItem('ampat_residents')
     const savedConfig = localStorage.getItem('ampat_config')
     if (savedResidents) setResidents(JSON.parse(savedResidents))
     if (savedConfig) setConfig(JSON.parse(savedConfig))
   }, [])
+
+  useEffect(() => { localStorage.setItem('ampat_residents', JSON.stringify(residents)) }, [residents])
+  useEffect(() => { localStorage.setItem('ampat_config', JSON.stringify(config)) }, [config])
+
+  const handleAuth = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setAuthError('')
+    try {
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, authEmail, authPassword)
+      } else {
+        await createUserWithEmailAndPassword(auth, authEmail, authPassword)
+      }
+      setAuthEmail('')
+      setAuthPassword('')
+    } catch (err) {
+      setAuthError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+      setUser(null)
+    } catch (err) {
+      setAuthError(err.message)
+    }
+  }
 
   useEffect(() => { localStorage.setItem('ampat_residents', JSON.stringify(residents)) }, [residents])
   useEffect(() => { localStorage.setItem('ampat_config', JSON.stringify(config)) }, [config])
@@ -379,6 +426,72 @@ export default function App() {
     </div>
   )
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-8">
+          <div className="mb-8 text-center">
+            <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">A</div>
+            <h1 className="text-3xl font-bold text-gray-900">AMPAT</h1>
+            <p className="text-gray-600 mt-2">Sistema de Gestão de Carnês</p>
+          </div>
+
+          <form onSubmit={handleAuth} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input 
+                type="email" 
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                placeholder="seu@email.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Senha</label>
+              <input 
+                type="password" 
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                placeholder="••••••••"
+              />
+            </div>
+
+            {authError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                {authError}
+              </div>
+            )}
+
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? 'Autenticando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600 text-sm">
+              {isLogin ? 'Não tem conta? ' : 'Já tem conta? '}
+              <button 
+                onClick={() => { setIsLogin(!isLogin); setAuthError(''); }}
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {isLogin ? 'Criar agora' : 'Entrar'}
+              </button>
+            </p>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
   if (printTarget) {
     const residentsToPrint = printTarget === 'ALL' ? residents : residents.filter(r => r.id === printTarget)
     return (
@@ -431,10 +544,11 @@ export default function App() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:hidden bg-white shadow-sm p-4 flex justify-between items-center z-10">
           <span className="font-bold text-lg">AMPAT</span>
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 items-center">
             <button onClick={() => setActiveTab('dashboard')}><Home size={24} /></button>
             <button onClick={() => setActiveTab('residents')}><Users size={24} /></button>
             <button onClick={() => setActiveTab('carnets')}><FileText size={24} /></button>
+            <button onClick={handleLogout} className="text-red-600 hover:text-red-700"><LogOut size={24} /></button>
           </div>
         </header>
 
@@ -448,6 +562,10 @@ export default function App() {
                 {activeTab === 'carnets' && 'Central de Impressão'}
                 {activeTab === 'config' && 'Configurações do Sistema'}
               </h1>
+              <button onClick={handleLogout} className="hidden md:flex items-center text-red-600 hover:text-red-700 font-medium gap-2">
+                <LogOut size={20} />
+                Sair
+              </button>
             </div>
 
             {activeTab === 'dashboard' && <DashboardView />}
