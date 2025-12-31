@@ -210,6 +210,11 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [printTarget, setPrintTarget] = useState(null)
 
+  // Estados para formulário de morador
+  const [formName, setFormName] = useState('')
+  const [formAddress, setFormAddress] = useState('')
+  const [formPhone, setFormPhone] = useState('')
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser)
@@ -256,14 +261,12 @@ export default function App() {
 
   const handleAddResident = (e) => {
     e.preventDefault()
-    const formData = new FormData(e.target)
     const newResident = {
       id: isEditing ? currentResident.id : Date.now(),
-      name: formData.get('name'),
-      address: formData.get('address'),
-      phone: formData.get('phone')
+      name: formName,
+      address: formAddress,
+      phone: formPhone
     }
-
     if (isEditing) {
       setResidents(residents.map(r => r.id === newResident.id ? newResident : r))
       setIsEditing(false)
@@ -271,7 +274,9 @@ export default function App() {
       setResidents([...residents, newResident])
     }
     setCurrentResident(null)
-    e.target.reset()
+    setFormName('')
+    setFormAddress('')
+    setFormPhone('')
     if (!isEditing) alert('Morador cadastrado com sucesso!')
   }
 
@@ -379,15 +384,15 @@ export default function App() {
         <form onSubmit={handleAddResident} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Nome Completo</label>
-            <input name="name" required defaultValue={currentResident?.name} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="name" required value={formName} onChange={e => setFormName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Endereço / Número do Lote</label>
-            <input name="address" required defaultValue={currentResident?.address} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="address" required value={formAddress} onChange={e => setFormAddress(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Telefone (Opcional)</label>
-            <input name="phone" defaultValue={currentResident?.phone} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="phone" value={formPhone} onChange={e => setFormPhone(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="secondary" type="button" onClick={() => setActiveTab('residents')}>Cancelar</Button>
