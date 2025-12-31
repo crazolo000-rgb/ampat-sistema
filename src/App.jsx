@@ -540,25 +540,9 @@ export default function App() {
     const residentsToPrint = printTarget === 'ALL' ? residents : residents.filter(r => r.id === printTarget)
     return (
       <div className="bg-white min-h-screen">
-        <div className="fixed top-0 left-0 w-full bg-gray-800 text-white p-4 flex justify-between items-center no-print z-50 shadow-lg">
-          <div>
-            <h2 className="font-bold">Modo de Impressão</h2>
-            <p className="text-xs text-gray-300">Pressione Ctrl+P ou clique em Imprimir. Use a escala "Ajustar à pagina" se necessário.</p>
-          </div>
-          <div className="flex space-x-3">
-            <Button variant="secondary" onClick={() => setPrintTarget(null)}>Cancelar</Button>
-            <Button variant="primary" onClick={() => window.print()} icon={Printer}>Imprimir Agora</Button>
-          </div>
-        </div>
-
-        <div className="pt-20 print:pt-0">
+        <div className="pt-4 print:pt-0">
           {residentsToPrint.map((resident, idx) => (
             <div key={resident.id} className={idx < residentsToPrint.length - 1 ? 'page-break' : ''}>
-              <div className="text-center py-10 border-b mb-8 print:hidden">
-                <h1 className="text-2xl font-bold">{config.assocName}</h1>
-                <p>Carnê de Pagamento - {config.year}</p>
-                <p className="font-bold text-xl mt-2">{resident.name}</p>
-              </div>
               <CarnetSheet resident={resident} config={config} />
             </div>
           ))}
