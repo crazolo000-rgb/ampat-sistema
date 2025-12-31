@@ -8,6 +8,38 @@ import {
 import { auth } from './firebase'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
+const AMPATLogo = ({ size = 'md' }) => {
+  const sizeMap = { sm: '32', md: '40', lg: '64' }
+  const s = sizeMap[size]
+  return (
+    <svg viewBox="0 0 64 64" width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ampat-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style={{ stopColor: '#00b4ff', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#0084ff', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+      {/* House base */}
+      <rect x="16" y="32" width="32" height="24" fill="url(#ampat-gradient)" rx="2" />
+      {/* House roof */}
+      <polygon points="16,32 32,16 48,32" fill="#00c9ff" />
+      {/* Door */}
+      <rect x="28" y="40" width="8" height="16" fill="#ffffff" opacity="0.8" />
+      {/* Windows */}
+      <rect x="20" y="38" width="5" height="5" fill="#ffffff" opacity="0.7" />
+      <rect x="39" y="38" width="5" height="5" fill="#ffffff" opacity="0.7" />
+      {/* Tree trunk */}
+      <rect x="30" y="24" width="4" height="8" fill="#8B4513" />
+      {/* Tree foliage - circle */}
+      <circle cx="32" cy="18" r="8" fill="#2d5016" />
+      {/* AMPAT text background */}
+      <rect x="4" y="52" width="56" height="10" fill="#ff3333" rx="1" />
+      {/* AMPAT text */}
+      <text x="32" y="59" fontSize="8" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">AMPAT</text>
+    </svg>
+  )
+}
+
 const Card = ({ children, className = '' }) => (
   <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
     {children}
@@ -17,10 +49,10 @@ const Card = ({ children, className = '' }) => (
 const Button = ({ children, onClick, variant = 'primary', className = '', icon: Icon, type }) => {
   const baseStyle = 'flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500',
+    primary: 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400',
+    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400',
     danger: 'bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500',
-    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500'
+    success: 'bg-cyan-500 text-white hover:bg-cyan-600 focus:ring-cyan-400'
   }
 
   return (
@@ -238,38 +270,38 @@ export default function App() {
   const DashboardView = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 border-l-4 border-blue-500">
+        <Card className="p-6 border-l-4 border-blue-400">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Total Moradores</p>
               <h3 className="text-3xl font-bold text-gray-900">{residents.length}</h3>
             </div>
-            <Users className="text-blue-500" />
+            <Users className="text-blue-400" />
           </div>
         </Card>
-        <Card className="p-6 border-l-4 border-green-500">
+        <Card className="p-6 border-l-4 border-cyan-400">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Receita Mensal (Est.)</p>
               <h3 className="text-3xl font-bold text-gray-900">R$ {(residents.length * parseFloat(config.value)).toFixed(2).replace('.', ',')}</h3>
             </div>
-            <div className="text-green-500 font-bold text-xl">R$</div>
+            <div className="text-cyan-400 font-bold text-xl">R$</div>
           </div>
         </Card>
-        <Card className="p-6 border-l-4 border-purple-500">
+        <Card className="p-6 border-l-4 border-blue-300">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Ano Fiscal</p>
               <h3 className="text-3xl font-bold text-gray-900">{config.year}</h3>
             </div>
-            <FileText className="text-purple-500" />
+            <FileText className="text-blue-300" />
           </div>
         </Card>
       </div>
 
-      <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
-        <h3 className="text-lg font-bold text-blue-900 mb-2">Bem-vindo ao Sistema AMPAT</h3>
-        <p className="text-blue-800">Use o menu lateral para cadastrar moradores. Na aba "Gerar Carnês", você pode gerar e imprimir os pagamentos mensais para a portaria. Certifique-se de configurar a Chave PIX na aba "Configurações" para facilitar o recebimento.</p>
+      <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+        <h3 className="text-lg font-bold text-blue-800 mb-2">Bem-vindo ao Sistema AMPAT</h3>
+        <p className="text-blue-700">Use o menu lateral para cadastrar moradores. Na aba "Gerar Carnês", você pode gerar e imprimir os pagamentos mensais para a portaria. Certifique-se de configurar a Chave PIX na aba "Configurações" para facilitar o recebimento.</p>
       </div>
     </div>
   )
@@ -279,7 +311,7 @@ export default function App() {
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <input type="text" placeholder="Buscar morador..." className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <input type="text" placeholder="Buscar morador..." className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
         <Button onClick={() => { setIsEditing(false); setCurrentResident(null); setActiveTab('residents_form') }} icon={Plus}>Novo Morador</Button>
       </div>
@@ -301,7 +333,7 @@ export default function App() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.address}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.phone || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => handleEdit(resident)} className="text-blue-600 hover:text-blue-900 mr-4">Editar</button>
+                  <button onClick={() => handleEdit(resident)} className="text-blue-500 hover:text-blue-600 mr-4">Editar</button>
                   <button onClick={() => handleDelete(resident.id)} className="text-red-600 hover:text-red-900">Excluir</button>
                 </td>
               </tr>
@@ -324,15 +356,15 @@ export default function App() {
         <form onSubmit={handleAddResident} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Nome Completo</label>
-            <input name="name" required defaultValue={currentResident?.name} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+            <input name="name" required defaultValue={currentResident?.name} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Endereço / Número do Lote</label>
-            <input name="address" required defaultValue={currentResident?.address} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+            <input name="address" required defaultValue={currentResident?.address} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Telefone (Opcional)</label>
-            <input name="phone" defaultValue={currentResident?.phone} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+            <input name="phone" defaultValue={currentResident?.phone} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="secondary" type="button" onClick={() => setActiveTab('residents')}>Cancelar</Button>
@@ -351,32 +383,32 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Nome da Associação</label>
-              <input value={config.assocName} onChange={(e) => setConfig({...config, assocName: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <input value={config.assocName} onChange={(e) => setConfig({...config, assocName: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">CNPJ (Opcional)</label>
-              <input value={config.cnpj} onChange={(e) => setConfig({...config, cnpj: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <input value={config.cnpj} onChange={(e) => setConfig({...config, cnpj: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
-          <div className="p-4 bg-yellow-50 rounded border border-yellow-200">
-            <label className="block text-sm font-bold text-yellow-800 mb-1">Chave PIX (Importante)</label>
-            <p className="text-xs text-yellow-700 mb-2">Essa chave aparecerá impressa em todos os carnês para facilitar o pagamento.</p>
-            <input value={config.pixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setConfig({...config, pixKey: e.target.value})} className="block w-full px-3 py-2 border border-yellow-400 rounded-md focus:ring-yellow-500 focus:border-yellow-500" />
+          <div className="p-4 bg-blue-50 rounded border border-blue-200">
+            <label className="block text-sm font-bold text-blue-800 mb-1">Chave PIX (Importante)</label>
+            <p className="text-xs text-blue-700 mb-2">Essa chave aparecerá impressa em todos os carnês para facilitar o pagamento.</p>
+            <input value={config.pixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setConfig({...config, pixKey: e.target.value})} className="block w-full px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Valor Mensal (R$)</label>
-              <input type="number" step="0.01" value={config.value} onChange={(e) => setConfig({...config, value: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <input type="number" step="0.01" value={config.value} onChange={(e) => setConfig({...config, value: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Dia Vencimento</label>
-              <input type="number" min="1" max="31" value={config.dueDay} onChange={(e) => setConfig({...config, dueDay: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <input type="number" min="1" max="31" value={config.dueDay} onChange={(e) => setConfig({...config, dueDay: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Ano de Ref.</label>
-              <input type="number" value={config.year} onChange={(e) => setConfig({...config, year: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+              <input type="number" value={config.year} onChange={(e) => setConfig({...config, year: e.target.value})} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
@@ -390,8 +422,8 @@ export default function App() {
 
   const CarnetsView = () => (
     <div className="space-y-6">
-      <div className="bg-white p-4 rounded-lg shadow mb-6 border-l-4 border-indigo-500">
-        <h3 className="font-bold text-indigo-900">Como funciona:</h3>
+      <div className="bg-white p-4 rounded-lg shadow mb-6 border-l-4 border-blue-400">
+        <h3 className="font-bold text-blue-800">Como funciona:</h3>
         <p className="text-sm text-gray-600">Selecione um morador abaixo para gerar um PDF pronto para impressão com os 12 meses do ano configurado ({config.year}).</p>
       </div>
 
@@ -423,11 +455,13 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8">
           <div className="mb-8 text-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">A</div>
-            <h1 className="text-3xl font-bold text-gray-900">AMPAT</h1>
+            <div className="mx-auto mb-4">
+              <AMPATLogo size="lg" />
+            </div>
+            <h1 className="text-3xl font-bold text-blue-900">AMPAT</h1>
             <p className="text-gray-600 mt-2">Sistema de Gestão de Carnês</p>
           </div>
 
@@ -439,7 +473,7 @@ export default function App() {
                 value={authEmail}
                 onChange={(e) => setAuthEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" 
                 placeholder="seu@email.com"
               />
             </div>
@@ -451,7 +485,7 @@ export default function App() {
                 value={authPassword}
                 onChange={(e) => setAuthPassword(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" 
                 placeholder="••••••••"
               />
             </div>
@@ -513,19 +547,21 @@ export default function App() {
   return (
     <div className="flex h-screen bg-gray-100 font-sans text-gray-800">
       <aside className="w-64 bg-white shadow-md flex-shrink-0 hidden md:flex flex-col">
-        <div className="p-6 border-b border-gray-100 flex items-center">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mr-3">A</div>
-          <span className="font-bold text-xl text-gray-800">AMPAT</span>
+        <div className="p-4 border-b border-blue-100 flex items-center bg-gradient-to-r from-blue-50 to-cyan-50">
+          <div className="w-10 h-10 mr-3">
+            <AMPATLogo size="md" />
+          </div>
+          <span className="font-bold text-lg text-blue-900">AMPAT</span>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'dashboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}><Home className="mr-3" size={20} /> Dashboard</button>
-          <button onClick={() => setActiveTab('residents')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'residents' || activeTab === 'residents_form' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}><Users className="mr-3" size={20} /> Moradores</button>
-          <button onClick={() => setActiveTab('carnets')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'carnets' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}><FileText className="mr-3" size={20} /> Gerar Carnês</button>
-          <button onClick={() => setActiveTab('config')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'config' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}><Settings className="mr-3" size={20} /> Configurações</button>
+          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'dashboard' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Home className="mr-3" size={20} /> Dashboard</button>
+          <button onClick={() => setActiveTab('residents')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'residents' || activeTab === 'residents_form' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Users className="mr-3" size={20} /> Moradores</button>
+          <button onClick={() => setActiveTab('carnets')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'carnets' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><FileText className="mr-3" size={20} /> Gerar Carnês</button>
+          <button onClick={() => setActiveTab('config')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'config' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Settings className="mr-3" size={20} /> Configurações</button>
         </nav>
 
-        <div className="p-4 border-t border-gray-100 text-xs text-gray-400 text-center">Sistema de Gestão v1.0</div>
+        <div className="p-4 border-t border-blue-100 text-xs text-blue-400 text-center">Sistema de Gestão v1.0</div>
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden">
