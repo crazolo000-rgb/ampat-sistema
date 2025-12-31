@@ -77,80 +77,103 @@ const CarnetSheet = ({ resident, config, monthsToPrint = [0,1,2,3,4,5,6,7,8,9,10
         const monthName = months[monthIndex]
 
         return (
-          <div key={monthIndex} className="flex border-b-2 border-dashed border-gray-400 h-[290px] mb-4 break-inside-avoid">
-            <div className="w-1/4 border-r-2 border-dashed border-gray-400 p-4 flex flex-col justify-between bg-gray-50">
-              <div>
-                <div className="text-xs font-bold text-gray-500 uppercase">Vencimento</div>
-                <div className="text-lg font-bold text-gray-900 mb-4">{formattedDate}</div>
-
-                <div className="text-xs font-bold text-gray-500 uppercase">Valor</div>
-                <div className="text-lg font-bold text-gray-900 mb-4">R$ {parseFloat(config.value).toFixed(2).replace('.', ',')}</div>
-
-                <div className="text-xs font-bold text-gray-500 uppercase">Mês de Ref.</div>
-                <div className="text-sm font-medium text-gray-900 mb-4">{monthName}/{config.year}</div>
-
-                <div className="text-xs font-bold text-gray-500 uppercase">Pagador</div>
-                <div className="text-xs text-gray-900 truncate">{resident.name}</div>
+          <div key={monthIndex} className="border-2 border-black p-0 mb-8 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+            {/* Header with Logo and Title */}
+            <div className="border-b-2 border-black p-4 text-center">
+              <div className="text-xl font-bold mb-1">CARNÊ {config.year}</div>
+              <div className="mb-3">
+                <svg viewBox="0 0 64 64" width="40" height="40" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 auto' }}>
+                  <defs>
+                    <linearGradient id="ampat-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#00b4ff', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: '#0084ff', stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
+                  <rect x="16" y="32" width="32" height="24" fill="url(#ampat-gradient)" rx="2" />
+                  <polygon points="16,32 32,16 48,32" fill="#00c9ff" />
+                  <rect x="28" y="40" width="8" height="16" fill="#ffffff" opacity="0.8" />
+                  <rect x="20" y="38" width="5" height="5" fill="#ffffff" opacity="0.7" />
+                  <rect x="39" y="38" width="5" height="5" fill="#ffffff" opacity="0.7" />
+                  <rect x="30" y="24" width="4" height="8" fill="#8B4513" />
+                  <circle cx="32" cy="18" r="8" fill="#2d5016" />
+                  <rect x="4" y="52" width="56" height="10" fill="#ff3333" rx="1" />
+                  <text x="32" y="59" fontSize="8" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">AMPAT</text>
+                </svg>
               </div>
-              <div className="text-[10px] text-center text-gray-400">Via da Associação</div>
+              <div className="text-sm font-bold text-red-700">AMPAT</div>
+              <div className="text-xs font-bold">ASSOCIAÇÃO DE MORADORES E PROPRIETÁRIOS DO PARQUE ALTO TAQUARAL</div>
             </div>
 
-            <div className="w-3/4 p-4 flex flex-col relative">
-              <div className="flex justify-between items-start border-b-2 border-gray-800 pb-2 mb-2">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold mr-3">{config.assocName.substring(0,2).toUpperCase()}</div>
-                  <div>
-                    <h2 className="font-bold text-lg leading-tight uppercase">{config.assocName}</h2>
-                    <p className="text-xs text-gray-600">Contribuição Mensal - Segurança</p>
+            {/* Main Content Grid - 2 columns */}
+            <div className="grid grid-cols-2 gap-0">
+              {/* Left Column - Via da Associação */}
+              <div className="border-r-2 border-black p-4">
+                <div className="text-xs font-bold text-center mb-3 border-b border-black pb-2">VIA DA ASSOCIAÇÃO</div>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="border border-black p-2">
+                    <div className="font-bold uppercase">Morador:</div>
+                    <div className="font-bold">{resident.name}</div>
+                  </div>
+
+                  <div className="border border-black p-2">
+                    <div className="font-bold uppercase">Endereço:</div>
+                    <div className="font-bold">{resident.address}</div>
+                  </div>
+
+                  <div className="border border-black p-2 text-center">
+                    <div className="font-bold uppercase text-red-700 mb-1">ATENÇÃO - IMPORTANTE</div>
+                    <div className="mb-1">Vencimento: <span className="font-bold text-red-700">{formattedDate}</span></div>
+                    <div className="mb-1">Valor: <span className="font-bold">R$ {parseFloat(config.value).toFixed(2).replace('.', ',')}</span></div>
+                    <div className="text-[10px] mt-1">Após esta data é o valor de multa</div>
+                  </div>
+
+                  <div className="text-center text-[10px] italic">
+                    {monthName}/{config.year}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-xs text-gray-500">Recibo do Pagador</div>
-                  <div className="font-mono text-xl font-bold">{monthIndex + 1}/{config.year}</div>
-                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-gray-50 p-2 rounded border border-gray-200">
-                  <span className="block text-xs text-gray-500 font-bold uppercase">Beneficiário</span>
-                  <span className="block font-medium truncate">{config.assocName}</span>
-                  {config.cnpj && <span className="block text-xs text-gray-600">{config.cnpj}</span>}
-                </div>
-                <div className="bg-gray-50 p-2 rounded border border-gray-200 text-right">
-                  <span className="block text-xs text-gray-500 font-bold uppercase">Vencimento</span>
-                  <span className="block text-xl font-bold text-red-700">{formattedDate}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="col-span-2">
-                  <span className="block text-xs text-gray-500 font-bold uppercase">Pagador (Morador)</span>
-                  <span className="block font-medium text-lg truncate">{resident.name}</span>
-                  <span className="block text-sm text-gray-600 truncate">{resident.address}</span>
-                </div>
-                <div className="bg-blue-50 p-2 rounded border border-blue-100 text-right flex flex-col justify-center">
-                  <span className="block text-xs text-blue-800 font-bold uppercase">Valor a Pagar</span>
-                  <span className="block text-2xl font-bold text-blue-900">R$ {parseFloat(config.value).toFixed(2).replace('.', ',')}</span>
-                </div>
-              </div>
-
-              <div className="flex-grow border border-gray-300 rounded p-3 bg-white">
-                <div className="text-xs font-bold text-gray-500 uppercase mb-1">Instruções de Pagamento</div>
-                <p className="text-sm text-gray-800 mb-2">Este carnê refere-se à taxa de manutenção/segurança. O pagamento garante a continuidade dos serviços.</p>
-                {config.pixKey && (
-                  <div className="flex items-center bg-gray-100 p-2 rounded mt-2">
-                    <div className="mr-3 p-1 border border-gray-300 bg-white rounded">
-                      <div className="w-8 h-8 flex items-center justify-center text-[10px] text-center font-bold">QR PIX</div>
-                    </div>
-                    <div>
-                      <span className="block text-xs font-bold text-gray-600">Chave PIX para transferência:</span>
-                      <span className="block font-mono text-sm font-bold select-all">{config.pixKey}</span>
-                    </div>
+              {/* Right Column - Via do Morador */}
+              <div className="p-4">
+                <div className="text-xs font-bold text-center mb-3 border-b border-black pb-2">VIA DO MORADOR</div>
+                
+                <div className="space-y-3 text-xs">
+                  <div className="border border-black p-2">
+                    <div className="font-bold uppercase">Morador:</div>
+                    <div className="font-bold">{resident.name}</div>
                   </div>
-                )}
-              </div>
 
-              <div className="absolute bottom-2 right-4 text-[10px] text-gray-400">Gerado em {new Date().toLocaleDateString()} • Sistema AMPAT</div>
+                  <div className="border border-black p-2">
+                    <div className="font-bold uppercase">Endereço:</div>
+                    <div className="font-bold">{resident.address}</div>
+                  </div>
+
+                  <div className="border-2 border-red-700 p-2 text-center bg-red-50">
+                    <div className="font-bold uppercase text-red-700 mb-1">ATENÇÃO - IMPORTANTE</div>
+                    <div className="mb-1">Para pagamento até 08 de cada</div>
+                    <div className="mb-1">mês. O valor é de: <span className="font-bold">R$ {parseFloat(config.value).toFixed(2).replace('.', ',')}</span></div>
+                    <div className="font-bold text-red-700 text-[10px] mt-1">Vencimento: {formattedDate}</div>
+                  </div>
+
+                  <div className="text-center text-[10px] italic">
+                    {monthName}/{config.year}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Section - Instructions */}
+            <div className="border-t-2 border-black p-4 bg-gray-50">
+              <div className="text-xs font-bold mb-2">INSTRUÇÕES DE PAGAMENTO:</div>
+              <div className="text-xs mb-2">Este carnê refere-se a taxa de manutenção/segurança condominal. O pagamento garante a continuidade dos serviços.</div>
+              
+              {config.pixKey && (
+                <div className="border border-black p-2 mt-2 bg-white">
+                  <div className="text-xs font-bold mb-1">Chave PIX para transferência:</div>
+                  <div className="text-xs font-mono font-bold text-blue-700 break-all">{config.pixKey}</div>
+                </div>
+              )}
             </div>
           </div>
         )
