@@ -6,7 +6,7 @@ import {
   Save, Home, Search, CheckCircle, Download, LogOut
 } from 'lucide-react'
 import { auth } from './firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 const Card = ({ children, className = '' }) => (
   <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
@@ -130,7 +130,6 @@ const CarnetSheet = ({ resident, config, monthsToPrint = [0,1,2,3,4,5,6,7,8,9,10
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [user, setUser] = useState(null)
-  const [isLogin, setIsLogin] = useState(true)
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
@@ -178,11 +177,7 @@ export default function App() {
     setLoading(true)
     setAuthError('')
     try {
-      if (isLogin) {
-        await signInWithEmailAndPassword(auth, authEmail, authPassword)
-      } else {
-        await createUserWithEmailAndPassword(auth, authEmail, authPassword)
-      }
+      await signInWithEmailAndPassword(auth, authEmail, authPassword)
       setAuthEmail('')
       setAuthPassword('')
     } catch (err) {
@@ -472,20 +467,12 @@ export default function App() {
               className="w-full"
               disabled={loading}
             >
-              {loading ? 'Autenticando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
+              {loading ? 'Autenticando...' : 'Entrar'}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">
-              {isLogin ? 'Não tem conta? ' : 'Já tem conta? '}
-              <button 
-                onClick={() => { setIsLogin(!isLogin); setAuthError(''); }}
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
-                {isLogin ? 'Criar agora' : 'Entrar'}
-              </button>
-            </p>
+          <div className="mt-6 text-center text-xs text-gray-500">
+            <p>Acesso restrito — apenas administradores</p>
           </div>
         </Card>
       </div>
