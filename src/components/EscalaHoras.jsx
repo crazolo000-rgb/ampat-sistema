@@ -41,6 +41,7 @@ import * as XLSX from 'xlsx';
     XLSX.writeFile(wb, `escala_${funcionario}_${mes+1}_${ano}.xlsx`);
   }
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { db } from '../firebase';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -66,7 +67,20 @@ function getDiasDoMes(mes, ano) {
   return dias;
 }
 
-export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, isAdmin }) {
+export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, isAdmin = false }) {
+    // Debug: Warn if isAdmin is undefined
+    useEffect(() => {
+      if (typeof isAdmin === 'undefined') {
+        // eslint-disable-next-line no-console
+        console.warn('EscalaHoras: isAdmin prop is undefined!');
+      }
+    }, [isAdmin]);
+  EscalaHoras.propTypes = {
+    funcionario: PropTypes.string.isRequired,
+    mes: PropTypes.number,
+    ano: PropTypes.number,
+    isAdmin: PropTypes.bool
+  };
   const meses = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
     'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
