@@ -90,6 +90,7 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
   const [ano, setAno] = useState(anoProp ?? anoAtual);
   const [dias, setDias] = useState(() => getDiasDoMes(mes, ano));
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
     setDias(getDiasDoMes(mes, ano));
@@ -97,6 +98,12 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
 
   useEffect(() => {
     let ativo = true;
+    setErro("");
+    if (!funcionario || typeof funcionario !== "string" || funcionario.trim() === "") {
+      setLoading(false);
+      setErro("Funcionário não selecionado ou inválido.");
+      return;
+    }
     async function fetchData() {
       setLoading(true);
       try {
@@ -109,7 +116,10 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
           setDias(getDiasDoMes(mes, ano));
         }
       } catch (e) {
-        if (ativo) setDias(getDiasDoMes(mes, ano));
+        if (ativo) {
+          setDias(getDiasDoMes(mes, ano));
+          setErro("Erro ao carregar escala: " + (e.message || e));
+        }
       } finally {
         if (ativo) setLoading(false);
       }
@@ -119,7 +129,14 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
   }, [funcionario, mes, ano]);
 
   function handleChange(idx, campo, valor) {
-    setDias(dias => dias.map((d, i) => i === idx ? { ...d, [campo]: valor } : d));
+    setDias(dias => dias.map((d, i) => {
+      if (i !== idx) return d;
+      const novo = { ...d, [campo]: valor };
+      if (["entrada", "saida", "descanso"].includes(campo)) {
+        novo.total = calcularTotal(novo.entrada, novo.saida, novo.descanso);
+      }
+      return novo;
+    }));
   }
 
   function handleFeriado(idx) {
@@ -153,14 +170,7 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
   }, 0);
   const totalMesStr = `${Math.floor(totalMes/60).toString().padStart(2, '0')}:${(totalMes%60).toString().padStart(2, '0')}`;
 
-  useEffect(() => {
-    // Atualiza o campo total automaticamente ao digitar entrada/saida/descanso
-    setDias(dias => dias.map(d => ({
-      ...d,
-      total: calcularTotal(d.entrada, d.saida, d.descanso)
-    })));
-    // eslint-disable-next-line
-  }, [dias.map(d => `${d.entrada}-${d.saida}-${d.descanso}`).join()]);
+
 
   async function salvarEscala() {
     const ref = doc(collection(db, 'escalas'), `${funcionario}_${mes+1}_${ano}`);
@@ -170,6 +180,9 @@ export default function EscalaHoras({ funcionario, mes: mesProp, ano: anoProp, i
 
   if (loading) {
     return <div>Carregando...</div>;
+  }
+  if (erro) {
+    return <div className="text-red-600 font-bold p-4">{erro}</div>;
   }
 
   return (

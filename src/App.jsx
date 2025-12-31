@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import EscalaHoras from './components/EscalaHoras.jsx'
+import GerenciadorEscalaTrabalho from './components/GerenciadorEscalaTrabalho.jsx'
 import './App.css'
 import './index.css'
 import {
@@ -428,15 +429,15 @@ export default function App() {
         <form onSubmit={handleAddResident} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Nome Completo</label>
-            <input name="name" required value={formName} onChange={e => setFormName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="name" required autoComplete="off" value={formName} onChange={e => setFormName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Endereço / Número do Lote</label>
-            <input name="address" required value={formAddress} onChange={e => setFormAddress(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="address" required autoComplete="off" value={formAddress} onChange={e => setFormAddress(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Telefone (Opcional)</label>
-            <input name="phone" value={formPhone} onChange={e => setFormPhone(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
+            <input name="phone" autoComplete="off" value={formPhone} onChange={e => setFormPhone(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" />
           </div>
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="secondary" type="button" onClick={() => setActiveTab('residents')}>Cancelar</Button>
@@ -467,32 +468,32 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Nome da Associação</label>
-              <input value={formAssocName} onChange={(e) => setFormAssocName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input autoComplete="off" value={formAssocName} onChange={(e) => setFormAssocName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">CNPJ (Opcional)</label>
-              <input value={formCnpj} onChange={(e) => setFormCnpj(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input autoComplete="off" value={formCnpj} onChange={(e) => setFormCnpj(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
           <div className="p-4 bg-blue-50 rounded border border-blue-200">
             <label className="block text-sm font-bold text-blue-800 mb-1">Chave PIX (Importante)</label>
             <p className="text-xs text-blue-700 mb-2">Essa chave aparecerá impressa em todos os carnês para facilitar o pagamento.</p>
-            <input value={formPixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setFormPixKey(e.target.value)} className="block w-full px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+            <input autoComplete="off" value={formPixKey} placeholder="Ex: CNPJ, Email ou Celular" onChange={(e) => setFormPixKey(e.target.value)} className="block w-full px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Valor Mensal (R$)</label>
-              <input type="number" step="0.01" value={formValue} onChange={(e) => setFormValue(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" step="0.01" autoComplete="off" value={formValue} onChange={(e) => setFormValue(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Dia Vencimento</label>
-              <input type="number" min="1" max="31" value={formDueDay} onChange={(e) => setFormDueDay(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" min="1" max="31" autoComplete="off" value={formDueDay} onChange={(e) => setFormDueDay(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Ano de Ref.</label>
-              <input type="number" value={formYear} onChange={(e) => setFormYear(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
+              <input type="number" autoComplete="off" value={formYear} onChange={(e) => setFormYear(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-400 focus:border-blue-400" />
             </div>
           </div>
 
@@ -555,7 +556,7 @@ export default function App() {
               <input 
                 type="email" 
                 value={authEmail}
-                onChange={(e) => setAuthEmail(e.target.value)}
+                autoComplete="off" onChange={(e) => setAuthEmail(e.target.value)}
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" 
                 placeholder="seu@email.com"
@@ -567,7 +568,7 @@ export default function App() {
               <input 
                 type="password" 
                 value={authPassword}
-                onChange={(e) => setAuthPassword(e.target.value)}
+                autoComplete="off" onChange={(e) => setAuthPassword(e.target.value)}
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400" 
                 placeholder="••••••••"
@@ -623,6 +624,7 @@ export default function App() {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
+                    <button onClick={() => setActiveTab('gerenciadorEscala')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'gerenciadorEscala' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><FileText className="mr-3" size={20} /> Gerenciador de Escala</button>
           <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'dashboard' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Home className="mr-3" size={20} /> Dashboard</button>
           <button onClick={() => setActiveTab('residents')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'residents' || activeTab === 'residents_form' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><Users className="mr-3" size={20} /> Moradores</button>
           <button onClick={() => setActiveTab('carnets')} className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${activeTab === 'carnets' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-blue-50'}`}><FileText className="mr-3" size={20} /> Gerar Carnês</button>
@@ -668,6 +670,7 @@ export default function App() {
             {activeTab === 'residents_form' && <ResidentFormView />}
             {activeTab === 'carnets' && <CarnetsView />}
             {activeTab === 'config' && <ConfigView />}
+            {activeTab === 'gerenciadorEscala' && <GerenciadorEscalaTrabalho />}
             {activeTab === 'escala' && (
               <div>
                 <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
